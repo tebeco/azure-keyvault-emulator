@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -310,6 +311,17 @@ namespace AzureKeyVaultEmulator.TestContainers.Helpers
 
             Console.WriteLine("To install on macOS trust store, run:");
             Console.WriteLine($"sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain \"{crtPath}\"");
+
+            var processStartInfo = new ProcessStartInfo();
+            processStartInfo.FileName = "osascript";
+            processStartInfo.ArgumentList.Add("-e");
+            processStartInfo.ArgumentList.Add($"do shell script \"ls /\" with prompt \"Foo\" with administrator privileges");
+            processStartInfo.RedirectStandardOutput = true;
+            processStartInfo.RedirectStandardError = true;
+            var process = Process.Start(processStartInfo);
+            process?.WaitForExit();
+            var stdout = process?.StandardOutput.ReadToEnd();
+            var stderr = process?.StandardError.ReadToEnd();
         }
 
         /// <summary>
